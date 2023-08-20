@@ -10,10 +10,12 @@ export interface CartModel {
 
 export interface ProductModel {
   _id: string;
+  id: number;
   name: string;
   description: string;
   category_id: string;
   image_url: string;
   price: number;
+  stock: number;
   availability: boolean;
 }

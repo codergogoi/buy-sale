@@ -4,8 +4,8 @@ export const ProductCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  margin: 5px;
-  height: 250px;
+  margin: 20px;
+  height: 200px;
   border-radius: 10px;
   width: 170px;
 `;
@@ -13,13 +13,11 @@ export const ProductCard = styled.div`
 export const ProductPriceDiv = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 60px;
-  width: 96%;
-  background: rgba(0, 0, 0, 0.6);
+  background: #484eff;
   border-radius: 0px 0px 10px 10px;
   color: #fff;
-  padding: 1%;
-  padding-left: 3%;
+  padding: 2%;
+  padding-left: 5%;
 `;
 
 export const LblProductPrice = styled.label`

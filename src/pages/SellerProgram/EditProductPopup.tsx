@@ -18,18 +18,24 @@ import { AppCSS } from "../../components";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { CategoryModel, CreateProductInput, ProductModel } from "../../types";
-import { CreateProduct } from "../../api/product-api";
+import {
+  CreateProduct,
+  DeleteProduct,
+  EditProduct,
+} from "../../api/product-api";
 
-interface AddProductProps {
+interface EditProductProps {
   open: boolean;
   categories: CategoryModel[];
+  product?: ProductModel;
   onClose: Function;
 }
 
-export const AddProductPopup: React.FC<AddProductProps> = ({
+export const EditProductPopup: React.FC<EditProductProps> = ({
   open,
   categories,
   onClose,
+  product,
 }) => {
   const dispatch = useDispatch();
 
@@ -40,22 +46,16 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
   const [stock, setStock] = useState(1);
   const [image, setImage] = useState("");
 
-  const [product, setProduct] = useState<ProductModel>();
-
-  useEffect(() => {}, []);
-
-  const existingOptions = () => {
-    // if (product?.ingredients) {
-    //   const initialValue = {};
-    //   return product.ingredients.reduce((obj, item) => {
-    //     return {
-    //       ...obj,
-    //       [item]: item,
-    //     };
-    //   }, initialValue);
-    // }
-    return {};
-  };
+  useEffect(() => {
+    if (product) {
+      setName(product.name);
+      setDescription(product.description);
+      setCatId(product.category_id);
+      setPrice(product.price);
+      setStock(product.stock);
+      setImage(product.image_url);
+    }
+  }, [open]);
 
   const resetModal = () => {
     setName("");
@@ -71,25 +71,38 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
     onClose();
   };
 
-  const onTapCreate = async () => {
+  const onTapEditProduct = async () => {
     const input: CreateProductInput = {
       category_id: +catId,
-      name,
-      description,
+      name: name,
+      description: description,
       image_url: image,
       price: +price,
       stock: +stock,
     };
 
-    const status = await CreateProduct(input);
-    if (status === 201) {
-      toast("new product created successfully!", {
+    const status = await EditProduct(product?.id as number, input);
+    if (status === 200) {
+      toast("Product Edited successfully!", {
         type: "success",
         style: {
           width: "400px",
         },
       });
-      resetModal();
+      onHandleClose();
+    }
+  };
+
+  const onTapDeleteProduct = async () => {
+    const status = await DeleteProduct(product?.id as number);
+    if (status === 200) {
+      toast("Product Deleted successfully!", {
+        type: "success",
+        style: {
+          width: "400px",
+        },
+      });
+      onHandleClose();
     }
   };
 
@@ -98,8 +111,6 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
     // console.log(url);
     return url ? url : placeHolder;
   };
-
-  const handleSaveFood = () => {};
 
   const onSelectCat = (event: SelectChangeEvent) => {
     setCatId(event.target.value);
@@ -252,7 +263,7 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
                 alignItems: "center",
               }}
             >
-              {product ? (
+              {product && (
                 <RowDiv
                   style={{
                     justifyContent: "center",
@@ -260,7 +271,7 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
                 >
                   <TapButton
                     width={160}
-                    onTap={() => {}}
+                    onTap={() => onTapDeleteProduct()}
                     title="Delete"
                     color={AppCSS.RED}
                     bgColor="none"
@@ -268,19 +279,11 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
                   <Spacer size={2} direction="row" />
                   <TapButton
                     width={160}
-                    onTap={() => handleSaveFood()}
+                    onTap={() => onTapEditProduct()}
                     bgColor={AppCSS.ORANGE}
                     title="Save"
                   />
                 </RowDiv>
-              ) : (
-                <TapButton
-                  width={180}
-                  onTap={onTapCreate}
-                  title="Create"
-                  radius={30}
-                  bgColor={AppCSS.ORANGE}
-                />
               )}
             </ColDiv>
           </ColDiv>

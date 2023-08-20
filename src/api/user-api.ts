@@ -8,7 +8,7 @@ export const LoginAPI = async (
   password: string
 ): Promise<ResponseModel> => {
   try {
-    const response = await axios.post(`${BASE_URL}/login`, {
+    const response = await axios.post(`${BASE_URL}/users/login`, {
       email,
       password,
     });
@@ -27,7 +27,7 @@ export const RegisterApi = async ({
   password,
 }: RegisterModel): Promise<ResponseModel> => {
   try {
-    const response = await axios.post(`${BASE_URL}/signup`, {
+    const response = await axios.post(`${BASE_URL}/users/signup`, {
       email: email,
       password: password,
       phone: phone,
@@ -44,8 +44,8 @@ export const RegisterApi = async ({
 export const GetVerificationCode = async (
   token: string
 ): Promise<ResponseModel> => {
-  const auth = axiosAuth(token);
-  const response = await auth.get(`${BASE_URL}/verify`);
+  const auth = axiosAuth();
+  const response = await auth.get(`${BASE_URL}/users/verify`);
   return handleResponse(response);
 };
 
@@ -53,9 +53,15 @@ export const VerifyCode = async (
   token: string,
   code: string
 ): Promise<ResponseModel> => {
-  const auth = axiosAuth(token);
-  const response = await auth.post(`${BASE_URL}/verify`, {
-    code,
+  const auth = axiosAuth();
+  const response = await auth.post(`${BASE_URL}/users/verify`, {
+    code: Number(code),
   });
+  return handleResponse(response);
+};
+
+export const GetProfile = async (token: string): Promise<ResponseModel> => {
+  const auth = axiosAuth();
+  const response = await auth.get(`${BASE_URL}/users/profile`);
   return handleResponse(response);
 };

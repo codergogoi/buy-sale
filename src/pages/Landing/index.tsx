@@ -29,11 +29,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ dashboard }) => {
 
   useEffect(() => {
     onFetchProducts();
-    const userData = localStorage.getItem("userData");
-    if (userData !== null) {
-      const auth = JSON.parse(userData) as unknown as UserModel;
-      dispatch(userLogin(auth));
-    }
   }, []);
 
   const onFetchProducts = async () => {

@@ -27,6 +27,7 @@ import ExitIcon from "@mui/icons-material/LogoutRounded";
 import { useAppSelector } from "../state/hooks";
 import { userLogin } from "../state/reducers/userSlice";
 import { UserModel } from "../types";
+import { GetProfile } from "../api/user-api";
 
 interface NavItemProps {
   title?: string;
@@ -86,9 +87,11 @@ export const NavItemProfile: React.FC<NavItemProps> = ({
   );
 };
 
-interface ProfileProps {}
+interface ProfileProps {
+  userType: string;
+}
 
-export const ProfileMenu: React.FC<ProfileProps> = ({}) => {
+export const ProfileMenu: React.FC<ProfileProps> = ({ userType }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -108,6 +111,35 @@ export const ProfileMenu: React.FC<ProfileProps> = ({}) => {
       return url ? url : AvatarIcon;
     }
     return AvatarIcon;
+  };
+
+  const sellerOptions = () => {
+    console.log("User Type", userType);
+    if (userType === "buyer") {
+      return (
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate("/seller-program");
+          }}
+        >
+          Join Seller Program
+        </MenuItem>
+      );
+    } else if (userType === "seller") {
+      return (
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate("/manage-products");
+          }}
+        >
+          Manage Products
+        </MenuItem>
+      );
+    }
+
+    return <></>;
   };
 
   const allowedMenu = () => {
@@ -140,19 +172,13 @@ export const ProfileMenu: React.FC<ProfileProps> = ({}) => {
         >
           Orders
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            navigate("/manage-products");
-          }}
-        >
-          Manage Products
-        </MenuItem>
+        {sellerOptions()}
         <MenuItem
           onClick={() => {
             localStorage.clear();
             dispatch(userLogin({} as UserModel));
             handleClose();
+            navigate("/");
           }}
         >
           Logout
@@ -211,11 +237,7 @@ export const NavBar = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    if (userData !== null) {
-      const auth = JSON.parse(userData) as unknown as UserModel;
-      dispatch(userLogin(auth));
-    }
+    FetchProfile();
   }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -230,15 +252,53 @@ export const NavBar = () => {
     setAnchorEl(null);
   }
 
+  const FetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (token !== null) {
+      const { data, msg } = await GetProfile(token as string);
+      if (data) {
+        const auth = data as UserModel;
+        auth.token = token;
+        dispatch(userLogin(auth));
+      } else {
+        console.log(`Error: ${msg}`);
+      }
+    }
+  };
+
   const navigate = useNavigate();
 
   const profile = useAppSelector((state) => state.userReducer.userProfile);
 
-  useEffect(() => {
-    if (!profile.token) {
-      navigate("/");
+  const sellerOptions = () => {
+    if (profile && profile.user_type) {
+      const userType = profile.user_type.toLowerCase();
+      if (userType === "buyer") {
+        return (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate("/seller-program");
+            }}
+          >
+            Join Seller Program
+          </MenuItem>
+        );
+      } else if (userType === "seller") {
+        return (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate("/manage-products");
+            }}
+          >
+            Manage Products
+          </MenuItem>
+        );
+      }
     }
-  }, [profile]);
+    return <></>;
+  };
 
   const authMenu = () => {
     return (
@@ -272,7 +332,7 @@ export const NavBar = () => {
             </p>
           </IconButton>
         </Link>
-        <ProfileMenu />
+        <ProfileMenu userType={profile ? profile.user_type : ""} />
       </RightNav>
     );
   };
@@ -280,6 +340,7 @@ export const NavBar = () => {
   const displayLogo = () => {
     return <LogoSmall src={Logo} />;
   };
+
   const availableOptions = () => {
     if (profile.token) {
       return authMenu();
@@ -378,27 +439,7 @@ export const NavBar = () => {
                   </Button>
                 </div>
               </MenuItem>
-              {profile.userType === "BUYER" && (
-                <MenuItem
-                  onClick={() => {
-                    handleClose();
-                    navigate("/seller-program");
-                  }}
-                >
-                  Join Seller Program
-                </MenuItem>
-              )}
-
-              {profile.userType === "SELLER" && (
-                <MenuItem
-                  onClick={() => {
-                    handleClose();
-                    navigate("/manage-products");
-                  }}
-                >
-                  Manage Products
-                </MenuItem>
-              )}
+              {sellerOptions()}
             </Menu>
           </div>
         </RightNav>

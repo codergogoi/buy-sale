@@ -73,7 +73,7 @@ const OrderPage: React.FC<OrderProps> = ({}) => {
                   marginBottom: 20,
                 }}
               >
-                {` Order Number: ${item.order_ref_id}`}
+                {` Order Number: ${item.id}`}
               </p>
             </div>
             <div
@@ -90,7 +90,7 @@ const OrderPage: React.FC<OrderProps> = ({}) => {
                   fontWeight: "600",
                 }}
               >
-                {`Status: ${item.status}`}
+                {`Status: `}
               </p>
             </div>
             <div
@@ -107,7 +107,7 @@ const OrderPage: React.FC<OrderProps> = ({}) => {
                   fontWeight: "600",
                 }}
               >
-                {`Amount:   $${Number(item.amount / 100).toFixed(2)}`}
+                {`Amount:   $${Number(item.price / 100).toFixed(2)}`}
               </p>
             </div>
           </RowDiv>

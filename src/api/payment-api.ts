@@ -6,7 +6,7 @@ export const CollectPaymentApi = async (
   token: string
 ): Promise<ResponseModel> => {
   try {
-    const auth = axiosAuth(token);
+    const auth = axiosAuth();
     const response = await auth.post(`${BASE_URL}/collect-payment`);
     return handleResponse(response);
   } catch (error) {
@@ -19,7 +19,7 @@ export const CollectPaymentApi = async (
 
 export const ConfirmOrder = async (token: string): Promise<ResponseModel> => {
   try {
-    const auth = axiosAuth(token);
+    const auth = axiosAuth();
     const response = await auth.post(`${BASE_URL}/order`);
     return handleResponse(response);
   } catch (error) {

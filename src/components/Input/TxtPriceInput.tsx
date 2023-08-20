@@ -37,7 +37,6 @@ export const PriceInput: React.FC<PriceInputProps> = ({
   return (
     <Box
       style={{
-        width: "96%",
         flexDirection: "row",
         padding: "1%",
         paddingLeft: "2%",

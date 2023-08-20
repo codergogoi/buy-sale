@@ -2,11 +2,12 @@ export interface UserModel {
   token: string;
   _id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+  verified: boolean;
   phone: string;
   createdAt: string;
-  userType: string;
+  user_type: string;
 }
 
 export interface RegisterModel {

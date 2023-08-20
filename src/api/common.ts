@@ -14,7 +14,8 @@ export const handleResponse = async (
   return { msg: "error occured" };
 };
 
-export const axiosAuth = (token: string) => {
+export const axiosAuth = () => {
+  const token = localStorage.getItem("token") as string;
   return axios.create({
     baseURL: BASE_URL,
     headers: {

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { CenterBox, ColDiv, RowDiv } from "../../components/Misc/misc.styled";
 import { Lbl } from "../../components/Labels";
 import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 import { useEffect, useState } from "react";
 
@@ -12,12 +11,13 @@ import { useAppSelector } from "../../state/hooks";
 import { Container } from "../../utils/globalstyled";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { JoinSellerProgramAPI } from "../../api/seller-api";
-import ProductView from "./productView";
 import { toast } from "react-toastify";
+import { UserModel } from "../../types";
+import { userLogin } from "../../state/reducers/userSlice";
 
 interface SellerProgramProps {}
 
-const SellerProgramPage: React.FC<SellerProgramProps> = ({}) => {
+const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -40,7 +40,7 @@ const SellerProgramPage: React.FC<SellerProgramProps> = ({}) => {
   const profile = useAppSelector((state) => state.userReducer.userProfile);
 
   const onTapJoinProgram = async () => {
-    const { data, msg } = await JoinSellerProgramAPI(profile.token, {
+    const { data, msg } = await JoinSellerProgramAPI({
       firstName,
       lastName,
       phoneNumber,
@@ -55,8 +55,14 @@ const SellerProgramPage: React.FC<SellerProgramProps> = ({}) => {
         country,
       },
     });
-    if (data) {
-      console.log(JSON.stringify(data));
+    if (msg === "success") {
+      if (data) {
+        const auth = data as UserModel;
+        if (auth.token) {
+          localStorage.setItem("token", auth.token);
+        }
+      }
+
       toast("Successfully joined seller program!", {
         type: "success",
         style: {
@@ -318,29 +324,16 @@ const SellerProgramPage: React.FC<SellerProgramProps> = ({}) => {
     );
   };
 
-  if (profile.userType === "BUYER") {
-    return (
-      <Container
-        style={{
-          width: "80%",
-          paddingTop: 20,
-        }}
-      >
-        {onboardingSellerProgram()}
-      </Container>
-    );
-  } else {
-    return (
-      <Container
-        style={{
-          width: "80%",
-          paddingTop: 20,
-        }}
-      >
-        <ProductView />
-      </Container>
-    );
-  }
+  return (
+    <Container
+      style={{
+        width: "80%",
+        paddingTop: 20,
+      }}
+    >
+      {onboardingSellerProgram()}
+    </Container>
+  );
 };
 
-export default SellerProgramPage;
+export default JoinSellerProgram;

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ColDiv, RowDiv } from "../../components/Misc/misc.styled";
+import { CenterBox, ColDiv, RowDiv } from "../../components/Misc/misc.styled";
 import { Lbl } from "../../components/Labels";
 import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -33,11 +33,19 @@ import {
   ProductPriceDiv,
 } from "./seller.styled";
 import { AddProductPopup } from "./AddProductPopup";
-import { FetchCategories, FetchSellerProducts } from "../../api/product-api";
+import {
+  FetchCategories,
+  FetchSellerOrders,
+  FetchSellerProducts,
+} from "../../api/product-api";
 import {
   sellerCategories,
+  setOrders,
   setSellerProducts,
 } from "../../state/reducers/productSlice";
+import { EditProductPopup } from "./EditProductPopup";
+import { OrderTable } from "./OrdersTable";
+import { OrderModel } from "../../types/models/order-model";
 
 interface ProductViewProps {}
 
@@ -46,38 +54,25 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<ProductModel>();
 
   const productReducer = useAppSelector((state) => state.productReducer);
 
-  const { sellerProducts, categories } = productReducer;
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  const [bankAccountNumber, setBankAccountNumber] = useState("");
-  const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
-  const [swiftCode, setSwiftCode] = useState("");
-
-  const [regularPayout, setRegularPayout] = useState(true);
-
-  const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
-  const [city, setCity] = useState("");
-  const [postCode, setPostCode] = useState("");
-  const [country, setCountry] = useState("");
+  const { sellerProducts, categories, currentSellerOrders } = productReducer;
 
   const profile = useAppSelector((state) => state.userReducer.userProfile);
 
-  const [value, setValue] = useState("1");
+  const [currentTab, setCurrentTab] = useState("1");
 
   useEffect(() => {
     onFetchProducts();
     onFetchCategories();
+    onFetchOrders();
   }, [profile.token]);
 
   const onFetchProducts = async () => {
-    const { data, msg } = await FetchSellerProducts(profile.token);
+    const { data, msg } = await FetchSellerProducts();
     if (data) {
       dispatch(setSellerProducts(data as ProductModel[]));
     } else {
@@ -94,8 +89,17 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
     }
   };
 
+  const onFetchOrders = async () => {
+    const { data, msg } = await FetchSellerOrders();
+    if (data) {
+      dispatch(setOrders(data as OrderModel[]));
+    } else {
+      console.log(`Error: ${msg}`);
+    }
+  };
+
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+    setCurrentTab(newValue);
   };
 
   const ImagePlaceHolder = (imageName?: string) => {
@@ -112,7 +116,11 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
         return (
           <ProductCard
             key={item._id}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setCurrentProduct(item);
+              setOpen(false);
+              setEditOpen(true);
+            }}
             style={{
               backgroundImage: `url("${ImagePlaceHolder(item?.image_url)}")`,
               backgroundSize: "contain",
@@ -120,13 +128,11 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
             }}
           >
             <ProductPriceDiv>
-              <LblProductTitle style={{ fontWeight: "600" }}>
-                {title}
-              </LblProductTitle>
-              <LblProductDesc>{item.description}</LblProductDesc>
-              <LblProductPrice style={{ fontWeight: "300" }}>
+              <p style={{ margin: 0, fontWeight: "600" }}>{title}</p>
+              <p>{item.id}</p>
+              <p style={{ margin: 0, fontWeight: "300" }}>
                 {`$${item.price.toFixed(2)}`}
-              </LblProductPrice>
+              </p>
             </ProductPriceDiv>
           </ProductCard>
         );
@@ -134,34 +140,16 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
     }
   };
 
-  const displayCurrentItems = () => {
-    if (Array.isArray(sellerProducts)) {
-      return sellerProducts.map((item) => (
-        <Accordion
-          key={item._id}
-          elevation={0}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            margin: 0,
-          }}
-        >
-          <AccordionDetails>
-            <Grid container spacing={2}>
-              {productCardRow(sellerProducts)}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      ));
-    }
-    return <></>;
-  };
-
   // fetch products related to users
   const productView = () => {
     return (
-      <ColDiv>
-        <ColDiv
+      <div
+        style={{
+          background: "#fff",
+          padding: 10,
+        }}
+      >
+        <div
           style={{
             width: "100%",
             padding: 0,
@@ -176,76 +164,104 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
               width={120}
               height={40}
               radius={20}
+              bgColor={AppCSS.ORANGE}
             />
           </RowDiv>
-        </ColDiv>
+        </div>
 
-        {/* Selected Action row */}
-        <div
+        <CenterBox
           style={{
-            display: "flex",
             width: "100%",
-            flexDirection: "row",
-            height: "calc(100vh - 180px)",
+            height: 600,
             overflow: "auto",
+            background: "#fff",
           }}
         >
-          <div
-            style={{
-              maxWidth: "160px",
-              flexDirection: "column",
-              overflowY: "scroll",
-            }}
-          ></div>
-
-          <ColDiv
-            style={{
-              width: "98%",
-              display: "flex",
-              margin: "50px",
-            }}
-          >
-            {displayCurrentItems()}
-          </ColDiv>
-        </div>
-      </ColDiv>
+          <Grid container spacing={2}>
+            {productCardRow(sellerProducts)}
+          </Grid>
+        </CenterBox>
+      </div>
     );
   };
 
-  const salesView = () => {
-    return <ColDiv>Sales View</ColDiv>;
-  };
-
-  const payoutView = () => {
-    return <ColDiv>Payout View</ColDiv>;
-  };
-
   return (
-    <Container
+    <div
       style={{
-        width: "80%",
-        paddingTop: 20,
+        display: "flex",
+        width: "100%",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        background: "#fff",
+        boxShadow: "1px 1px 5px 1px #DBDBDB",
+        padding: 10,
+        borderRadius: 10,
       }}
     >
-      <ColDiv>
-        <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange} aria-label="">
-              <Tab label="Manage Products" value="1" />
-              <Tab label="Sales Report" value="2" />
-            </TabList>
-          </Box>
-          <TabPanel value="1">{productView()}</TabPanel>
-          <TabPanel value="2">Sales Report</TabPanel>
-        </TabContext>
-      </ColDiv>
+      <TabContext value={currentTab}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            justifyContent: "flex-start",
+            width: "100%",
+          }}
+        >
+          <TabList onChange={handleChange} aria-label="">
+            <Tab
+              style={{
+                background: currentTab === "1" ? AppCSS.ORANGE : AppCSS.WHITE,
+                color: currentTab === "1" ? AppCSS.WHITE : AppCSS.BLACK,
+              }}
+              label="Manage Products"
+              value="1"
+            />
+            <Tab
+              style={{
+                background: currentTab === "2" ? AppCSS.ORANGE : AppCSS.WHITE,
+                color: currentTab === "2" ? AppCSS.WHITE : AppCSS.BLACK,
+              }}
+              label="Orders"
+              value="2"
+            />
+          </TabList>
+        </Box>
+        <TabPanel
+          style={{
+            width: "100%",
+            margin: 0,
+            padding: 0,
+          }}
+          value="1"
+        >
+          {productView()}
+        </TabPanel>
+        <TabPanel value="2">
+          <OrderTable
+            orders={
+              Array.isArray(currentSellerOrders) ? currentSellerOrders : []
+            }
+          />
+        </TabPanel>
+      </TabContext>
+      <EditProductPopup
+        product={currentProduct}
+        open={editOpen}
+        categories={categories}
+        onClose={() => {
+          onFetchProducts();
+          setEditOpen(false);
+        }}
+      />
       <AddProductPopup
         open={open}
         categories={categories}
-        onContinue={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
+        onClose={() => {
+          onFetchProducts();
+          setOpen(false);
+        }}
       />
-    </Container>
+    </div>
   );
 };
 

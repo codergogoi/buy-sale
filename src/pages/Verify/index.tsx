@@ -8,16 +8,8 @@ import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
 import { useEffect, useState } from "react";
 import { LoginContainer } from "./login.styled";
 import { toast } from "react-toastify";
-import {
-  GetVerificationCode,
-  LoginAPI,
-  RegisterApi,
-  VerifyCode,
-} from "../../api/user-api";
-import { UserModel } from "../../types";
-import { userLogin } from "../../state/reducers/userSlice";
+import { GetVerificationCode, VerifyCode } from "../../api/user-api";
 import { MuiOtpInput } from "mui-one-time-password-input";
-import { axiosAuth } from "../../api/common";
 import { AxiosError } from "axios";
 
 interface LoginProps {}
@@ -34,7 +26,7 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
     const token = localStorage.getItem("token");
     if (token !== null) {
       const { data } = await GetVerificationCode(token);
-      if (data.message) {
+      if (data) {
         toast("Enter the code sent your phone number!", {
           type: "success",
           style: {
@@ -61,8 +53,7 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
       return;
     }
     try {
-      const { data, msg } = await VerifyCode(token as string, otp);
-      console.log("data", data, msg);
+      const { msg } = await VerifyCode(token as string, otp);
       if (msg === "Error: user already verified!") {
         toast("user already verified!", {
           type: "success",
@@ -72,7 +63,13 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
         });
         navigate("/");
       }
-      if (data) {
+      if (msg === "success") {
+        toast("Phone number verified successfully!", {
+          type: "success",
+          style: {
+            width: "400px",
+          },
+        });
         navigate("/");
       } else {
         toast("Verification failed!", {

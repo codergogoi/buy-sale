@@ -35,7 +35,7 @@ const LoginPage: React.FC<LoginProps> = ({}) => {
     if (data) {
       const auth = data as UserModel;
       if (auth.token) {
-        localStorage.setItem("userData", JSON.stringify(auth));
+        localStorage.setItem("token", auth.token);
       }
       dispatch(userLogin(auth));
       navigate("/");
