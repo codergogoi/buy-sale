@@ -16,11 +16,11 @@ export const PostOrder = () => {
   }, []);
 
   const confirmOrder = async () => {
-    const { data, msg } = await ConfirmOrder(profile.token);
+    const { data, message } = await ConfirmOrder(profile.token);
     if (data) {
       console.log(JSON.stringify(data));
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
     setLoading(false);
   };

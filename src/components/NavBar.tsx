@@ -23,7 +23,6 @@ import UserIcon from "@mui/icons-material/Person";
 
 import { useDispatch } from "react-redux";
 
-import ExitIcon from "@mui/icons-material/LogoutRounded";
 import { useAppSelector } from "../state/hooks";
 import { userLogin } from "../state/reducers/userSlice";
 import { UserModel } from "../types";
@@ -114,7 +113,6 @@ export const ProfileMenu: React.FC<ProfileProps> = ({ userType }) => {
   };
 
   const sellerOptions = () => {
-    console.log("User Type", userType);
     if (userType === "buyer") {
       return (
         <MenuItem
@@ -255,13 +253,12 @@ export const NavBar = () => {
   const FetchProfile = async () => {
     const token = localStorage.getItem("token");
     if (token !== null) {
-      const { data, msg } = await GetProfile(token as string);
-      if (data) {
-        const auth = data as UserModel;
-        auth.token = token;
+      const { user, message } = await GetProfile(token as string);
+      if (user) {
+        const auth = user as UserModel;
         dispatch(userLogin(auth));
       } else {
-        console.log(`Error: ${msg}`);
+        console.log(`Error: ${message}`);
       }
     }
   };
@@ -297,7 +294,6 @@ export const NavBar = () => {
         );
       }
     }
-    return <></>;
   };
 
   const authMenu = () => {
@@ -342,7 +338,7 @@ export const NavBar = () => {
   };
 
   const availableOptions = () => {
-    if (profile.token) {
+    if (profile.id) {
       return authMenu();
     } else {
       return (
@@ -351,7 +347,7 @@ export const NavBar = () => {
             display: "flex",
           }}
         >
-          <Link to={"/login"}>
+          <Link to={"/cart"}>
             <IconButton
               style={{
                 borderRadius: 21,
@@ -399,7 +395,11 @@ export const NavBar = () => {
               onClose={handleClose}
               MenuListProps={{ onMouseLeave: handleClose }}
             >
-              <MenuItem>
+              <MenuItem
+                style={{
+                  background: AppCSS.WHITE,
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -447,6 +447,39 @@ export const NavBar = () => {
     }
   };
 
+  const handleOnSearch = (string: any, results: any) => {
+    // onSearch will have as the first callback parameter
+    // the string searched and for the second the results.
+    console.log(string, results);
+  };
+
+  const handleOnHover = (result: any) => {
+    // the item hovered
+    console.log(result);
+  };
+
+  const handleOnSelect = (item: any) => {
+    // the item selected
+    console.log(item);
+  };
+
+  const handleOnFocus = () => {
+    console.log("Focused");
+  };
+
+  const formatResult = (item: any) => {
+    return (
+      <>
+        <span style={{ display: "block", textAlign: "left" }}>
+          id: {item.id}
+        </span>
+        <span style={{ display: "block", textAlign: "left" }}>
+          name: {item.name}
+        </span>
+      </>
+    );
+  };
+
   return (
     <NavAppBar position="sticky" elevation={0}>
       <Toolbar>
@@ -473,6 +506,15 @@ export const NavBar = () => {
             width: "60%",
           }}
         >
+          {/* <ReactSearchAutocomplete
+            items={items}
+            onSearch={handleOnSearch}
+            onHover={handleOnHover}
+            onSelect={handleOnSelect}
+            onFocus={handleOnFocus}
+            autoFocus
+            formatResult={formatResult}
+          /> */}
           <TxtSearch onChange={() => {}} placeholder="Search product" />
         </div>
         <Typography

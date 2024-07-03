@@ -1,4 +1,4 @@
 export interface ResponseModel {
-  msg: string;
+  message: string;
   data?: any;
 }

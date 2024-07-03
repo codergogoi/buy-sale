@@ -1,6 +1,6 @@
 import { ResponseModel } from "../types";
 import { BASE_URL } from "../utils/AppConst";
-import { axiosAuth, handleResponse } from "./common";
+import { axiosAuth } from "./common";
 
 export const CollectPaymentApi = async (
   token: string
@@ -8,11 +8,11 @@ export const CollectPaymentApi = async (
   try {
     const auth = axiosAuth();
     const response = await auth.post(`${BASE_URL}/collect-payment`);
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -21,11 +21,11 @@ export const ConfirmOrder = async (token: string): Promise<ResponseModel> => {
   try {
     const auth = axiosAuth();
     const response = await auth.post(`${BASE_URL}/order`);
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };

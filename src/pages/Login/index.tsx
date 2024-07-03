@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useDispatch } from "react-redux";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CenterBox, ColDiv, RowDiv } from "../../components/Misc/misc.styled";
 import { Lbl } from "../../components/Labels";
 import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoginContainer } from "./login.styled";
 import { toast } from "react-toastify";
-import { LoginAPI, RegisterApi } from "../../api/user-api";
+import { GetProfile, LoginAPI } from "../../api/user-api";
 import { UserModel } from "../../types";
 import { userLogin } from "../../state/reducers/userSlice";
 
@@ -31,16 +31,27 @@ const LoginPage: React.FC<LoginProps> = ({}) => {
       });
       return;
     }
-    const { data, msg } = await LoginAPI(email, password);
-    if (data) {
-      const auth = data as UserModel;
-      if (auth.token) {
-        localStorage.setItem("token", auth.token);
-      }
-      dispatch(userLogin(auth));
+    const { token, message } = await LoginAPI(email, password);
+    if (token) {
+      localStorage.setItem("token", token);
+      dispatch(userLogin({ token } as UserModel));
+      await FetchProfile();
       navigate("/");
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
+    }
+  };
+
+  const FetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (token !== null) {
+      const { user, message } = await GetProfile(token as string);
+      if (user) {
+        const auth = user as UserModel;
+        dispatch(userLogin(auth));
+      } else {
+        console.log(`Error: ${message}`);
+      }
     }
   };
 

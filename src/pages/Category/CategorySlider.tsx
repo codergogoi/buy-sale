@@ -2,21 +2,21 @@
 import GridList from "@material-ui/core/GridList";
 import { GridListTile, GridListTileBar } from "@material-ui/core";
 import ProductPlaceholder from "../../images/product_placeholder.jpg";
-import { ProductModel } from "../../types";
+import { CategoryModel, ProductModel } from "../../types";
 import React from "react";
 import { AppCSS } from "../../components";
 import { useNavigate } from "react-router-dom";
 
 interface CategoryProps {
-  products: ProductModel[];
+  cats: CategoryModel[];
 }
 
-export const CategorySlider: React.FC<CategoryProps> = ({ products }) => {
+export const CategorySlider: React.FC<CategoryProps> = ({ cats }) => {
   const navigate = useNavigate();
 
   const catCards = () => {
-    if (Array.isArray(products)) {
-      return products.map((item) => (
+    if (Array.isArray(cats)) {
+      return cats.map((item) => (
         <GridListTile
           key={item._id}
           style={{
@@ -45,7 +45,7 @@ export const CategorySlider: React.FC<CategoryProps> = ({ products }) => {
             >
               <img
                 draggable={false}
-                src={item.image_url}
+                src={item.imageUrl}
                 alt={"placeholder"}
                 style={{
                   height: "120px",

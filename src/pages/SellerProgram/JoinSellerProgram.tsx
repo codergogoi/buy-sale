@@ -5,25 +5,21 @@ import { CenterBox, ColDiv, RowDiv } from "../../components/Misc/misc.styled";
 import { Lbl } from "../../components/Labels";
 import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useAppSelector } from "../../state/hooks";
 import { Container } from "../../utils/globalstyled";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { JoinSellerProgramAPI } from "../../api/seller-api";
 import { toast } from "react-toastify";
-import { UserModel } from "../../types";
-import { userLogin } from "../../state/reducers/userSlice";
 
 interface SellerProgramProps {}
 
 const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [phone_number, setPhoneNumber] = useState("");
 
   const [bankAccountNumber, setBankAccountNumber] = useState("");
   const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
@@ -37,32 +33,20 @@ const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
   const [postCode, setPostCode] = useState("");
   const [country, setCountry] = useState("");
 
-  const profile = useAppSelector((state) => state.userReducer.userProfile);
-
   const onTapJoinProgram = async () => {
-    const { data, msg } = await JoinSellerProgramAPI({
-      firstName,
-      lastName,
-      phoneNumber,
-      bankAccountNumber,
+    const { token, message } = await JoinSellerProgramAPI({
+      first_name,
+      last_name,
+      phone_number,
+      bankAccountNumber: +bankAccountNumber,
       swiftCode,
       paymentType: regularPayout ? "regular" : "weekly",
-      address: {
-        addressLine1,
-        addressLine2,
-        city,
-        postCode,
-        country,
-      },
     });
-    if (msg === "success") {
-      if (data) {
-        const auth = data as UserModel;
-        if (auth.token) {
-          localStorage.setItem("token", auth.token);
-        }
+    if (message === "become seller") {
+      // TODO: This should be status code
+      if (token) {
+        localStorage.setItem("token", token);
       }
-
       toast("Successfully joined seller program!", {
         type: "success",
         style: {
@@ -71,7 +55,7 @@ const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
       });
       navigate("/manage-products");
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 
@@ -119,7 +103,7 @@ const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
             <ColDiv>
               <Lbl title="First Name" color={AppCSS.GRAY_DARK} size={13} />
               <TxtInput
-                value={firstName}
+                value={first_name}
                 placeholder="First Name"
                 onChange={setFirstName}
               />
@@ -128,7 +112,7 @@ const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
             <ColDiv>
               <Lbl title="Last Name" color={AppCSS.GRAY_DARK} size={13} />
               <TxtInput
-                value={lastName}
+                value={last_name}
                 placeholder="Last Name"
                 onChange={setLastName}
               />
@@ -138,7 +122,7 @@ const JoinSellerProgram: React.FC<SellerProgramProps> = ({}) => {
               <Lbl title="Phone Number" color={AppCSS.GRAY_DARK} size={13} />
 
               <TxtInput
-                value={phoneNumber}
+                value={phone_number}
                 placeholder="Phone Number"
                 onChange={setPhoneNumber}
               />

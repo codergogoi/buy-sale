@@ -32,19 +32,17 @@ const SignupPage: React.FC<LoginProps> = ({}) => {
       });
       return;
     }
-    const { data, msg } = await RegisterApi({
+    const { token, message } = await RegisterApi({
       email,
       phone,
       password,
     });
-    if (data) {
-      const auth = data as UserModel;
-      if (auth.token) {
-        localStorage.setItem("token", auth.token);
-      }
+
+    if (token) {
+      localStorage.setItem("token", token);
       navigate("/verify");
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 

@@ -1,22 +1,19 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/AppConst";
-import { ResponseModel, RegisterModel } from "../types";
-import { axiosAuth, handleResponse } from "./common";
+import { RegisterModel } from "../types";
+import { axiosAuth } from "./common";
 
-export const LoginAPI = async (
-  email: string,
-  password: string
-): Promise<ResponseModel> => {
+export const LoginAPI = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${BASE_URL}/users/login`, {
       email,
       password,
     });
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -25,43 +22,38 @@ export const RegisterApi = async ({
   email,
   phone,
   password,
-}: RegisterModel): Promise<ResponseModel> => {
+}: RegisterModel) => {
   try {
-    const response = await axios.post(`${BASE_URL}/users/signup`, {
+    const response = await axios.post(`${BASE_URL}/users/register`, {
       email: email,
       password: password,
       phone: phone,
     });
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
 
-export const GetVerificationCode = async (
-  token: string
-): Promise<ResponseModel> => {
+export const GetVerificationCode = async (token: string) => {
   const auth = axiosAuth();
   const response = await auth.get(`${BASE_URL}/users/verify`);
-  return handleResponse(response);
+  return response.data;
 };
 
-export const VerifyCode = async (
-  token: string,
-  code: string
-): Promise<ResponseModel> => {
+export const VerifyCode = async (token: string, code: string) => {
   const auth = axiosAuth();
   const response = await auth.post(`${BASE_URL}/users/verify`, {
     code: Number(code),
   });
-  return handleResponse(response);
+  return response.status;
 };
 
-export const GetProfile = async (token: string): Promise<ResponseModel> => {
+export const GetProfile = async (token: string) => {
   const auth = axiosAuth();
   const response = await auth.get(`${BASE_URL}/users/profile`);
-  return handleResponse(response);
+  return response.data;
 };

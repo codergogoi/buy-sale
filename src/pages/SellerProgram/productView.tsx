@@ -72,29 +72,29 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
   }, [profile.token]);
 
   const onFetchProducts = async () => {
-    const { data, msg } = await FetchSellerProducts();
+    const { data, message } = await FetchSellerProducts();
     if (data) {
       dispatch(setSellerProducts(data as ProductModel[]));
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 
   const onFetchCategories = async () => {
-    const { data, msg } = await FetchCategories();
+    const { data, message } = await FetchCategories();
     if (data) {
       dispatch(sellerCategories(data as CategoryModel[]));
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 
   const onFetchOrders = async () => {
-    const { data, msg } = await FetchSellerOrders();
+    const { data, message } = await FetchSellerOrders();
     if (data) {
       dispatch(setOrders(data as OrderModel[]));
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 

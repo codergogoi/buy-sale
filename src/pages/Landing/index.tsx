@@ -8,12 +8,14 @@ import { Stack } from "@mui/material";
 import { RowDiv } from "../../components/Misc/misc.styled";
 import { CategorySlider } from "../Category/CategorySlider";
 import { useAppSelector } from "../../state/hooks";
-import { ProductModel, UserModel } from "../../types";
+import { CategoryModel, ProductModel, UserModel } from "../../types";
 import { userLogin } from "../../state/reducers/userSlice";
-import { FetchProducts } from "../../api/product-api";
-import { setProducts } from "../../state/reducers/productSlice";
+import { FetchCategories, FetchProducts } from "../../api/product-api";
+import {
+  sellerCategories,
+  setProducts,
+} from "../../state/reducers/productSlice";
 import { TopPrducts } from "../TopProducts";
-import { Spacer } from "../../components";
 
 interface LandingPageProps {
   dashboard?: ReactNode;
@@ -25,25 +27,35 @@ const LandingPage: React.FC<LandingPageProps> = ({ dashboard }) => {
 
   const productReducer = useAppSelector((state) => state.productReducer);
 
-  const { products } = productReducer;
+  const { products, categories } = productReducer;
 
   useEffect(() => {
+    onFetchCategories();
     onFetchProducts();
   }, []);
 
   const onFetchProducts = async () => {
-    const { data, msg } = await FetchProducts();
+    const { data, message } = await FetchProducts();
     if (data) {
       dispatch(setProducts(data as ProductModel[]));
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
+    }
+  };
+
+  const onFetchCategories = async () => {
+    const { data, message } = await FetchCategories();
+    if (data) {
+      dispatch(sellerCategories(data as CategoryModel[]));
+    } else {
+      console.log(`Error: ${message}`);
     }
   };
 
   return (
     <Stack spacing={3} style={{ alignItems: "center" }}>
       <DealsPage />
-      <CategorySlider products={products} />
+      <CategorySlider cats={categories} />
       <TopPrducts products={products} />
     </Stack>
   );

@@ -1,21 +1,19 @@
-import { ResponseModel, SellerProgramInput } from "../types";
+import { SellerProgramInput } from "../types";
 import { BASE_URL } from "../utils/AppConst";
-import { axiosAuth, handleResponse } from "./common";
+import { axiosAuth } from "./common";
 
-export const JoinSellerProgramAPI = async (
-  input: SellerProgramInput
-): Promise<ResponseModel> => {
+export const JoinSellerProgramAPI = async (input: SellerProgramInput) => {
   try {
     console.log(JSON.stringify(input));
     const auth = axiosAuth();
     const response = await auth.post(`${BASE_URL}/users/become-seller`, {
       ...input,
     });
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };

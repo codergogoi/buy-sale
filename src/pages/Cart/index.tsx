@@ -13,10 +13,11 @@ import { userLogin } from "../../state/reducers/userSlice";
 import { FetchCartItemsApi } from "../../api/product-api";
 import { useAppSelector } from "../../state/hooks";
 import { Container } from "../../utils/globalstyled";
-import { Stack } from "@mui/material";
+import { Box, Stack, Tab } from "@mui/material";
 import ProductPlaceholder from "../../images/product_placeholder.jpg";
 import { CollectPaymentApi } from "../../api/payment-api";
 import { MakePayment } from "../Payment";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 interface CartProps {}
 
@@ -29,6 +30,8 @@ const CartPage: React.FC<CartProps> = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [currentTab, setCurrentTab] = useState("");
+
   const [cartItems, setCartItems] = useState<CartModel[]>([]);
   const [appFee, setAppFee] = useState(0);
   const [productPrice, setProductPrice] = useState(0);
@@ -36,7 +39,9 @@ const CartPage: React.FC<CartProps> = ({}) => {
     PaymentCredential | false
   >(false);
 
-  const profile = useAppSelector((state) => state.userReducer.userProfile);
+  const userReducer = useAppSelector((state) => state.userReducer);
+
+  const profile = userReducer.userProfile;
 
   useEffect(() => {
     onGetCartItems();
@@ -47,18 +52,18 @@ const CartPage: React.FC<CartProps> = ({}) => {
   };
 
   const onInitPayment = async () => {
-    const { data, msg } = await CollectPaymentApi(profile.token);
+    const { data, message } = await CollectPaymentApi(profile.token);
     if (data) {
       console.log(data);
       const credential = data as PaymentCredential;
       setPaymentCredential(credential);
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 
   const onGetCartItems = async () => {
-    const { data, msg } = await FetchCartItemsApi(profile.token);
+    const { data, message } = await FetchCartItemsApi(profile.token);
     if (data) {
       setAppFee(Number(data.appFee));
       const items = data.cartItems as CartModel[];
@@ -71,7 +76,7 @@ const CartPage: React.FC<CartProps> = ({}) => {
       }
       setCartItems(items);
     } else {
-      console.log(`Error: ${msg}`);
+      console.log(`Error: ${message}`);
     }
   };
 
@@ -268,15 +273,133 @@ const CartPage: React.FC<CartProps> = ({}) => {
     return <></>;
   };
 
+  // return (
+  //   <Container
+  //     style={{
+  //       width: "80%",
+  //       paddingTop: 20,
+  //     }}
+  //   >
+  //     {paymentCredential ? paymentOption() : cartOption()}
+  //   </Container>
+  // );
+
+  const onChangeTab = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  };
+
+  const loginToView = (option: string) => {
+    return (
+      <CenterBox
+        style={{
+          width: "320px",
+          background: "#fff",
+          padding: 50,
+        }}
+      >
+        <p
+          style={{
+            fontSize: 32,
+            fontWeight: "600",
+            margin: 0,
+            padding: 50,
+            marginBottom: 10,
+          }}
+        >
+          Login to View Cart Items
+        </p>
+        <TapButton
+          title="Login"
+          bgColor={AppCSS.ORANGE}
+          radius={30}
+          height={52}
+          width={220}
+          onTap={() => navigate("/login")}
+        />
+      </CenterBox>
+    );
+  };
+
+  const displayCartAndOrders = () => {
+    if (profile.token) {
+      return (
+        <TabContext value={currentTab}>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: "divider",
+              justifyContent: "flex-start",
+              width: "100%",
+            }}
+          >
+            <TabList onChange={onChangeTab} aria-label="">
+              <Tab
+                style={{
+                  background: currentTab === "1" ? AppCSS.ORANGE : AppCSS.WHITE,
+                  color: currentTab === "1" ? AppCSS.WHITE : AppCSS.BLACK,
+                }}
+                label="Cart"
+                value="1"
+              />
+              <Tab
+                style={{
+                  background: currentTab === "2" ? AppCSS.ORANGE : AppCSS.WHITE,
+                  color: currentTab === "2" ? AppCSS.WHITE : AppCSS.BLACK,
+                }}
+                label="Orders"
+                value="2"
+              />
+            </TabList>
+          </Box>
+          <TabPanel
+            style={{
+              width: "100%",
+              margin: 0,
+              padding: 0,
+            }}
+            value="1"
+          ></TabPanel>
+          <TabPanel
+            style={{
+              width: "100%",
+              margin: 0,
+              padding: 0,
+            }}
+            value="2"
+          >
+            {loginToView("Order")}
+          </TabPanel>
+        </TabContext>
+      );
+    } else {
+      return loginToView("Cart");
+    }
+  };
+
   return (
-    <Container
+    <div
       style={{
-        width: "80%",
-        paddingTop: 20,
+        display: "flex",
+        width: "100%",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        padding: 10,
+        borderRadius: 10,
       }}
     >
-      {paymentCredential ? paymentOption() : cartOption()}
-    </Container>
+      <CenterBox
+        style={{
+          width: "1100px",
+          height: "600px",
+          background: "#fff",
+          padding: 50,
+          boxShadow: "1px 1px 5px 1px #DBDBDB",
+          borderRadius: 5,
+        }}
+      >
+        {displayCartAndOrders()}
+      </CenterBox>
+    </div>
   );
 };
 

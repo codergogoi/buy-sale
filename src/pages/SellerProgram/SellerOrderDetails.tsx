@@ -228,7 +228,7 @@ export const SellerOrderDetails: React.FC<DashboardProps> = ({}) => {
 
   const OrderDetails = () => {
     return (
-      <Accordion style={{ borderRadius: 10 }}>
+      <Accordion style={{ borderRadius: 10 }} defaultExpanded={true}>
         <AccordionSummary
           style={{
             background: AppCSS.ORANGE,

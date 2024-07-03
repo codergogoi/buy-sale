@@ -53,17 +53,9 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
       return;
     }
     try {
-      const { msg } = await VerifyCode(token as string, otp);
-      if (msg === "Error: user already verified!") {
-        toast("user already verified!", {
-          type: "success",
-          style: {
-            width: "400px",
-          },
-        });
-        navigate("/");
-      }
-      if (msg === "success") {
+      const status = await VerifyCode(token as string, otp);
+
+      if (status === 200) {
         toast("Phone number verified successfully!", {
           type: "success",
           style: {
@@ -71,16 +63,28 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
           },
         });
         navigate("/");
-      } else {
-        toast("Verification failed!", {
-          type: "error",
-          style: {
-            width: "400px",
-          },
-        });
       }
     } catch (error: unknown) {
-      console.log("err", error as AxiosError);
+      const err = error as AxiosError;
+      console.log(err);
+      if (err.response?.status) {
+        if (err.response?.status > 400) {
+          toast("Verification failed due to invalid code!", {
+            type: "error",
+            style: {
+              width: "400px",
+            },
+          });
+        } else if (err.response?.status === 400) {
+          toast("user already verified!", {
+            type: "success",
+            style: {
+              width: "400px",
+            },
+          });
+          navigate("/");
+        }
+      }
     }
   };
 

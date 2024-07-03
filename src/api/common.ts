@@ -1,18 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { ResponseModel } from "../../src/types";
+import axios from "axios";
 import { BASE_URL } from "../utils/AppConst";
-
-export const handleResponse = async (
-  response: AxiosResponse
-): Promise<ResponseModel> => {
-  if (response.status === 200) {
-    return {
-      msg: "success",
-      data: response.data.data,
-    };
-  }
-  return { msg: "error occured" };
-};
 
 export const axiosAuth = () => {
   const token = localStorage.getItem("token") as string;

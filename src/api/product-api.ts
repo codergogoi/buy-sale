@@ -1,6 +1,6 @@
 import { BASE_URL, PRODUCT_URL, TRANSACTION_URL } from "../utils/AppConst";
 import { CreateProductInput, ResponseModel } from "../types";
-import { axiosAuth, handleResponse } from "./common";
+import { axiosAuth } from "./common";
 import axios from "axios";
 
 export const FetchCartItemsApi = async (
@@ -9,11 +9,11 @@ export const FetchCartItemsApi = async (
   try {
     const auth = axiosAuth();
     const response = await auth.get(`${BASE_URL}/cart`);
-    return handleResponse(response);
+    return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -26,7 +26,7 @@ export const FetchOrderItemsApi = async (token: string) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -38,7 +38,7 @@ export const FetchCategories = async () => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -51,7 +51,7 @@ export const FetchSellerProducts = async () => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -64,7 +64,7 @@ export const FetchSellerOrders = async () => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -77,19 +77,19 @@ export const FetchSellerOrderById = async (id: number) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
 
 export const FetchProducts = async () => {
   try {
-    const response = await axios.get(`${PRODUCT_URL}/product`);
+    const response = await axios.get(`${PRODUCT_URL}/products`);
     return response.data;
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -101,7 +101,7 @@ export const FetchProduct = async (id: string) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -116,7 +116,7 @@ export const CreateProduct = async (input: CreateProductInput) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -131,7 +131,7 @@ export const EditProduct = async (id: number, input: CreateProductInput) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };
@@ -144,7 +144,7 @@ export const DeleteProduct = async (id: number) => {
   } catch (error) {
     console.log(error);
     return {
-      msg: "error occured",
+      message: "error occured",
     };
   }
 };

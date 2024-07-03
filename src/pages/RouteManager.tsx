@@ -14,6 +14,7 @@ import VerifyPage from "./Verify";
 import ManageProducts from "./SellerProgram";
 import JoinSellerProgram from "./SellerProgram/JoinSellerProgram";
 import { SellerOrderDetails } from "./SellerProgram/SellerOrderDetails";
+import { Profile } from "./Profile";
 
 interface RouteManagerProps {}
 
@@ -39,6 +40,8 @@ export const RouteManager: React.FC<RouteManagerProps> = ({}) => {
         <Route path="/manage-products" element={<ManageProducts />} />
         <Route path="/seller-order/:id" element={<SellerOrderDetails />} />
         <Route path="/product-details/:id" element={<ProductDetails />} />
+        <Route path="/profile" element={<Profile />} />
+
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="*" element={<NotFoundPage />} /> */}
       </Routes>

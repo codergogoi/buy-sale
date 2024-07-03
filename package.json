@@ -28,8 +28,9 @@
     "react-dom": "^18.2.0",
     "react-material-ui-carousel": "^3.4.2",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.10.0",
+    "react-router-dom": "6.10.0",
     "react-scripts": "5.0.1",
+    "react-search-autocomplete": "^8.5.2",
     "react-toastify": "^9.1.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
@@ -39,7 +40,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3030 react-scripts start",
+    "dev": "PORT=3030 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

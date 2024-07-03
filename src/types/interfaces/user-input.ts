@@ -1,17 +1,17 @@
 export interface UserInput {}
 
 export interface SellerProgramInput {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  bankAccountNumber: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  bankAccountNumber: number;
   swiftCode: string;
   paymentType: string;
-  address: {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    postCode: string;
-    country: string;
-  };
+  // address: {
+  //   addressLine1: string;
+  //   addressLine2: string;
+  //   city: string;
+  //   postCode: string;
+  //   country: string;
+  // };
 }
