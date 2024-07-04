@@ -6,7 +6,7 @@ import { setProduct } from "../../state/reducers/productSlice";
 import { ProductModel } from "../../types";
 import { useAppSelector } from "../../state/hooks";
 import { ColDiv, RowDiv } from "../../components/Misc/misc.styled";
-import ProductPlaceholder from "../../images/product_placeholder.jpg";
+import ProductPlaceholder from "../../images/place_holder.jpg";
 import { AppCSS, TapButton } from "../../components";
 
 export const ProductDetails = () => {
@@ -27,7 +27,7 @@ export const ProductDetails = () => {
   const onFetchProduct = async (id: string) => {
     const { message, data } = await FetchProduct(id);
     if (data) {
-      dispatch(setProduct(data.product as ProductModel));
+      dispatch(setProduct(data as ProductModel));
     } else {
       console.log(`Error: ${message}`);
     }

@@ -82,7 +82,7 @@ export const AddProductPopup: React.FC<AddProductProps> = ({
     };
 
     const status = await CreateProduct(input);
-    if (status === 201) {
+    if (status === 200) {
       toast("new product created successfully!", {
         type: "success",
         style: {

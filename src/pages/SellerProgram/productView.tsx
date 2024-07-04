@@ -115,7 +115,7 @@ const ProductView: React.FC<ProductViewProps> = ({}) => {
         const title = item.name ? item.name : "default Name";
         return (
           <ProductCard
-            key={item._id}
+            key={item.id}
             onClick={() => {
               setCurrentProduct(item);
               setOpen(false);

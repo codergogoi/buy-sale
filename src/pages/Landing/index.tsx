@@ -1,15 +1,10 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
-import { Container } from "../../utils/globalstyled";
 import DealsPage from "../Deals";
 import { Stack } from "@mui/material";
-import { RowDiv } from "../../components/Misc/misc.styled";
 import { CategorySlider } from "../Category/CategorySlider";
 import { useAppSelector } from "../../state/hooks";
-import { CategoryModel, ProductModel, UserModel } from "../../types";
-import { userLogin } from "../../state/reducers/userSlice";
+import { CategoryModel, ProductModel } from "../../types";
 import { FetchCategories, FetchProducts } from "../../api/product-api";
 import {
   sellerCategories,

@@ -6,6 +6,7 @@ import { CategoryModel, ProductModel } from "../../types";
 import React from "react";
 import { AppCSS } from "../../components";
 import { useNavigate } from "react-router-dom";
+import imagePlaceholder from "../../images/place_holder.jpg";
 
 interface CategoryProps {
   cats: CategoryModel[];
@@ -45,7 +46,7 @@ export const CategorySlider: React.FC<CategoryProps> = ({ cats }) => {
             >
               <img
                 draggable={false}
-                src={item.imageUrl}
+                src={imagePlaceholder}
                 alt={"placeholder"}
                 style={{
                   height: "120px",

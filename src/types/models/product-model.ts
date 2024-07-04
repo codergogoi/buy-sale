@@ -9,7 +9,6 @@ export interface CartModel {
 }
 
 export interface ProductModel {
-  _id: string;
   id: number;
   name: string;
   description: string;

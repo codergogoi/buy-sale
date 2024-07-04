@@ -96,7 +96,7 @@ export const FetchProducts = async () => {
 
 export const FetchProduct = async (id: string) => {
   try {
-    const response = await axios.get(`${PRODUCT_URL}/product/${id}`);
+    const response = await axios.get(`${PRODUCT_URL}/products/${id}`);
     return response.data;
   } catch (error) {
     console.log(error);
