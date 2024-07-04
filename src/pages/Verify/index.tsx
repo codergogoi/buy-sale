@@ -8,15 +8,23 @@ import { AppCSS, Spacer, TapButton, TxtInput } from "../../components";
 import { useEffect, useState } from "react";
 import { LoginContainer } from "./login.styled";
 import { toast } from "react-toastify";
-import { GetVerificationCode, VerifyCode } from "../../api/user-api";
+import {
+  GetProfile,
+  GetVerificationCode,
+  VerifyCode,
+} from "../../api/user-api";
 import { MuiOtpInput } from "mui-one-time-password-input";
 import { AxiosError } from "axios";
+import { UserModel } from "../../types";
+import { userLogin } from "../../state/reducers/userSlice";
 
 interface LoginProps {}
 
 const VerifyPage: React.FC<LoginProps> = ({}) => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getVerificationCode();
@@ -62,6 +70,7 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
             width: "400px",
           },
         });
+        await FetchProfile();
         navigate("/");
       }
     } catch (error: unknown) {
@@ -82,8 +91,22 @@ const VerifyPage: React.FC<LoginProps> = ({}) => {
               width: "400px",
             },
           });
+          await FetchProfile();
           navigate("/");
         }
+      }
+    }
+  };
+
+  const FetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (token !== null) {
+      const { user, message } = await GetProfile(token as string);
+      if (user) {
+        const auth = user as UserModel;
+        dispatch(userLogin(auth));
+      } else {
+        console.log(`Error: ${message}`);
       }
     }
   };

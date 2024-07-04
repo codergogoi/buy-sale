@@ -35,19 +35,20 @@ export const TopPrducts: React.FC<CategoryProps> = ({ products }) => {
             <div style={{ height: 200, width: 220 }}>
               <img src={placeholderImage} height={200} />
             </div>
+
             <div
               style={{
-                height: 50,
                 display: "flex",
-                justifyContent: "center",
-                fontSize: 16,
+                justifyContent: "space-around",
+                fontSize: 14,
                 fontWeight: "600",
                 margin: 0,
                 padding: 0,
                 color: "#505050",
               }}
             >
-              ${item.price}
+              <p>{item.name}</p>
+              <p>${item.price}</p>
             </div>
           </a>
         </GridListTile>
